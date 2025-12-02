@@ -1,8 +1,7 @@
 import pygame as pygame
 import sys
 
-# ---------- Config ----------
-WIDTH, HEIGHT = 480, 600          # <<< increased height so nothing overlaps
+WIDTH, HEIGHT = 480, 600        
 CELL = WIDTH // 3
 LINE_WIDTH = 6
 CROSS_WIDTH = 12
@@ -17,7 +16,7 @@ O_COLOR = (80, 160, 220)
 HIGHLIGHT_COLOR = (100, 255, 100)
 RESULT_COLOR = (120, 220, 200)
 
-# ---------- Utilities (unchanged) ----------
+
 def empty_board():
     return (' ',) * 9
 
@@ -60,7 +59,7 @@ def canonical(board, player):
     variants = rotations_and_reflections(board)
     return (min(variants), player)
 
-# ---------- Minimax (unchanged) ----------
+
 memo = {}
 
 def minimax(board, player, alpha=-2, beta=2):
@@ -130,8 +129,6 @@ def best_move(board, player):
         if o in best_moves:
             return o
     return best_moves[0] if best_moves else None
-
-# ---------- Pygame setup ----------
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic-Tac-Toe")
@@ -165,7 +162,6 @@ def highlight_line(line):
     a, b, c = line
     pygame.draw.line(screen, HIGHLIGHT_COLOR, cell_center(a), cell_center(c), 8)
 
-# ---------- Game state ----------
 board = empty_board()
 current_player = 'X'
 game_over = False
@@ -192,19 +188,16 @@ def reset(new_first='X'):
     winner_line = None
     show_help = False
 
-# ---------- Buttons (wider spacing) ----------
 BTN_RESTART = pygame.Rect(10, CELL*3 + 10, 130, 40)
 BTN_FIRST = pygame.Rect(170, CELL*3 + 10, 150, 40)
 
 
-# AI starts if X
 if current_player == 'X':
     ai_move = best_move(board, 'X')
     if ai_move is not None:
         board = board[:ai_move] + ('X',) + board[ai_move+1:]
         current_player = 'O'
 
-# ---------- Main Loop ----------
 running = True
 while running:
     clock.tick(FPS)
@@ -261,7 +254,6 @@ while running:
             if event.key == pygame.K_r:
                 reset(current_player)
 
-    # ------- DRAW -------
     screen.fill(BG)
     draw_grid()
 
@@ -273,18 +265,12 @@ while running:
         highlight_line(winner_line)
 
     pygame.draw.rect(screen, (20,20,20), (0, CELL*3, WIDTH, HEIGHT - CELL*3))
-
-    # beautiful tinted status text
-
-
-    # buttons
     pygame.draw.rect(screen, (70,70,70), BTN_RESTART)
     pygame.draw.rect(screen, (70,70,70), BTN_FIRST)
 
     screen.blit(font.render("Restart (R)", True, LINE_COLOR), (20, CELL*3 + 18))
     screen.blit(font.render("Toggle Start", True, LINE_COLOR), (180, CELL*3 + 18))
 
-    # help text adjusted higher
     if show_help:
         help_lines = [
             "Click a cell to play as O.",
@@ -295,7 +281,6 @@ while running:
             screen.blit(font.render(ln, True, LINE_COLOR),
                         (10, CELL*3 - 100 + i*22))
 
-    # final result with pretty color
     if game_over:
         t, w = is_terminal(board)
         msg = "It's a draw!" if w=="Draw" else f"{w} wins!"
